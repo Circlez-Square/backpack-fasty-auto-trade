@@ -84,7 +84,9 @@ if __name__ == '__main__':
 
         # print(account_balance)
         asks_depth1 = round(float(sol_market_depth1['asks'][0][1]),2)
+        asks_price1 = round(float(sol_market_depth2['asks'][0][0]),pair_accuracy)
         bids_depth1 = round(float(sol_market_depth1['bids'][-1][1]),2)
+        bids_price1=round(float(sol_market_depth2['bids'][-1][0]),pair_accuracy)
         # print(asks_depth1,bids_depth1)
         asks_depth2 = round(float(sol_market_depth2['asks'][0][1]),2)
         asks_price2 = round(float(sol_market_depth2['asks'][0][0]),pair_accuracy)
@@ -93,10 +95,12 @@ if __name__ == '__main__':
         # print(asks_depth2,bids_depth2)
         ask_quick_market=0
         bid_quick_market=-1
-        if (asks_depth1-asks_depth2)/elapsed_time*5>asks_depth2:
-            ask_quick_market+=1
-        if (bids_depth1-bids_depth2)/elapsed_time*5>bids_depth2:
-            bid_quick_market-=1
+        if asks_price1 == asks_price2:
+            if (asks_depth1-asks_depth2)/elapsed_time*5>asks_depth2:
+                ask_quick_market+=1
+        if bids_price1 == bids_price2:        
+            if (bids_depth1-bids_depth2)/elapsed_time*5>bids_depth2:
+                bid_quick_market-=1
         # print(f"The time difference is {elapsed_time} seconds")
 
         asks_price=round(float(sol_market_depth2['asks'][ask_quick_market][0]),pair_accuracy)
