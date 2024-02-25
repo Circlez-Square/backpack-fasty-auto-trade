@@ -22,7 +22,7 @@ if __name__ == '__main__':
     wish_vol=wish_vol #期望刷的量，单位USDC
     def buy_and_sell(usdc_available,sol_available,asks_price,bids_price):
         get_diff_price = round(asks_price-bids_price,pair_accuracy)
-        if get_diff_price == 1/int(10**pair_accuracy):
+        if get_diff_price == 1/int(10**pair_accuracy):   #掛單簿沒有滑價時 差0.01的價差 當maker = 千分之8.5  大家對價格有共識 ，但最好能檢查成交量
             if usdc_available>5:
 
                 bpx.ExeOrder(
@@ -84,7 +84,9 @@ if __name__ == '__main__':
 
         # print(account_balance)
         asks_depth1 = round(float(sol_market_depth1['asks'][0][1]),2)
+        asks_price1 = round(float(sol_market_depth2['asks'][0][0]), pair_accuracy)
         bids_depth1 = round(float(sol_market_depth1['bids'][-1][1]),2)
+        bids_price1 = round(float(sol_market_depth2['bids'][-1][0]), pair_accuracy)
         # print(asks_depth1,bids_depth1)
         asks_depth2 = round(float(sol_market_depth2['asks'][0][1]),2)
         asks_price2 = round(float(sol_market_depth2['asks'][0][0]),pair_accuracy)
@@ -93,10 +95,12 @@ if __name__ == '__main__':
         # print(asks_depth2,bids_depth2)
         ask_quick_market=0
         bid_quick_market=-1
-        if (asks_depth1-asks_depth2)/elapsed_time*5>asks_depth2:
-            ask_quick_market+=1
-        if (bids_depth1-bids_depth2)/elapsed_time*5>bids_depth2:
-            bid_quick_market-=1
+        if asks_price1 == asks_price2:
+            if (asks_depth1-asks_depth2)/elapsed_time*5>asks_depth2:
+                ask_quick_market+=1
+        if bids_price1 == bids_price2:         
+            if (bids_depth1-bids_depth2)/elapsed_time*5>bids_depth2:
+                bid_quick_market-=1
         # print(f"The time difference is {elapsed_time} seconds")
 
         asks_price=round(float(sol_market_depth2['asks'][ask_quick_market][0]),pair_accuracy)
@@ -107,8 +111,6 @@ if __name__ == '__main__':
             vol = 0
             print('发送交易时发生错误')
         return vol
-
-
 
     begin_vol = int(wish_vol)
     run_time=time.time()
